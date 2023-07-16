@@ -40,21 +40,29 @@ namespace ECommerceAPI.Persistence.Repositories
             return entityEntry.State == EntityState.Deleted;
         }
 
-        public bool Remove(string id)
+        public bool RemoveRange(List<T> datas)
         {
-            throw new NotImplementedException();
+            Table.RemoveRange(datas);
+            return true;
+        }
+
+        public async Task<bool> RemoveAsync(string id)
+        {
+            T model = await Table.FirstOrDefaultAsync(data => data.Id == Guid.Parse(id));
+            return Remove(model) ;
         }
 
 
-        public Task<bool> UpdateAsync(T model)
+        public bool Update(T model)
         {
-            throw new NotImplementedException();
+            EntityEntry entityEntry = Table.Update(model);
+            return entityEntry.State ==  EntityState.Modified;
         }
 
-        public Task<int> SaveAsync()
-        {
-            throw new NotImplementedException();
-        }
+        public async Task<int> SaveAsync()
+            => await _context.SaveChangesAsync();
+
+
 
     }
 }
